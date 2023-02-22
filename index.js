@@ -8,7 +8,6 @@ const { TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 // importação dos comandos
 const fs = require('node:fs');
 const path = require('path');
-
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
@@ -28,8 +27,27 @@ for(const file of commandFiles) {
 
 console.log(client.commands);
 
+// login do bot
 client.once(Events.ClientReady, c => {
 	console.log(`Pronto! Login realizado como ${c.user.tag}`);
 });
-
 client.login(TOKEN);
+
+// listener de interações do bot
+client.on(Events.InteractionCreate, async interaction => {
+    if(!interaction.isChatInputCommand()) return
+    const command = interaction.client.commands.get(interaction.commandName);
+    if(!command) {
+        console.error('Comando não encontrado');
+        return;
+    }
+
+    try {
+        await command.execute(interaction)
+    } catch(error) {
+        console.error(error);
+        await interaction.reply('Houve um erro ao executar esse comando');
+    }
+
+});
+
