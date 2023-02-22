@@ -25,8 +25,6 @@ for(const file of commandFiles) {
     }
 }
 
-console.log(client.commands);
-
 // login do bot
 client.once(Events.ClientReady, c => {
 	console.log(`Pronto! Login realizado como ${c.user.tag}`);
@@ -35,6 +33,17 @@ client.login(TOKEN);
 
 // listener de interações do bot
 client.on(Events.InteractionCreate, async interaction => {
+    if(interaction.isStringSelectMenu()) {
+        const selected = interaction.values[0];
+        if(selected == 'javascript') {
+            await interaction.reply('Documentação do JavaScript: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript');
+        } else if(selected == 'reactjs') {
+            await interaction.reply('Documentação do ReactJS: https://pt-br.reactjs.org/');
+        } else if(selected == 'nodejs') {
+            await interaction.reply('Documentação do NodeJS: https://nodejs.org/pt-br/docs/');
+        }
+    }
+
     if(!interaction.isChatInputCommand()) return
     const command = interaction.client.commands.get(interaction.commandName);
     if(!command) {
